@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link :to="/movie/ + movie.id">
-      <img :src="movie.backdrop_path | urlImg" :alt="movie.title" />
+      <img :src="movie.poster_path | urlImg" :alt="movie.title" />
       <h3 v-if="titledisplay">
         {{ movie.title }}
       </h3>

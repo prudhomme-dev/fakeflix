@@ -7,11 +7,18 @@
         <router-link to="/fav">Favoris</router-link>
         <router-link to="/watch">Film à voir</router-link>
       </div>
-      <input
-        type="text"
-        v-on:keyup="searchMovie($event)"
-        placeholder="Rechercher un film"
-      />
+      <div>
+        <button v-if="!$store.state.sessionId" v-on:click="login()">
+          Se Connecter
+        </button>
+
+        <button v-else v-on:click="logout()">Se Déconnecter</button>
+        <input
+          type="text"
+          v-on:keyup="searchMovie($event)"
+          placeholder="Rechercher un film"
+        />
+      </div>
     </nav>
     <router-view
       :searchuser="$store.state.searchWord"
@@ -59,16 +66,44 @@ export default {
       if (this.$store.state.searchWord) {
         try {
           let response = await fetch(
-            "https://api.themoviedb.org/3/search/movie?api_key=" +
-              this.$store.state.apiKey +
-              "&language=fr-FR&query=" +
-              this.$store.state.searchWord
+            `https://api.themoviedb.org/3/search/movie?api_key=${this.$store.state.apiKey}&language=fr-FR&query=${this.$store.state.searchWord}`
           );
           let movies = await response.json();
           this.resultSearch = movies.results;
         } catch (e) {
           console.error("ERREUR", e);
         }
+      }
+    },
+    login: function () {
+      if (this.$route.path != "/login") {
+        this.$router.push({ name: "login" });
+      }
+    },
+    logout: async function () {
+      try {
+        let response = await fetch(
+          `https://api.themoviedb.org/3/authentication/session?api_key=${this.$store.state.apiKey}`,
+          {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              session_id: this.$store.state.sessionId,
+            }),
+          }
+        );
+        let sessions = await response.json();
+        if (sessions.success) {
+          this.$store.commit("resetSession");
+          if (this.$route.name != "home") this.$router.push({ name: "home" });
+        } else {
+          window.alert("Erreur de déconnexion");
+        }
+      } catch (e) {
+        console.error("ERREUR", e);
       }
     },
   },
@@ -103,6 +138,16 @@ nav {
   background-color: gray;
 }
 
+a {
+  color: #e50914;
+  text-decoration: none;
+}
+
+a:hover {
+  color: white;
+  transition: 0.5s;
+}
+
 nav a {
   color: rgb(204, 204, 204);
   padding: 5px 10px;
@@ -128,5 +173,21 @@ input {
 
 input:focus {
   outline: #e50914 1px solid;
+}
+
+button {
+  background-color: #e50914;
+  color: white;
+  padding: 10px 17px;
+  border: 1px solid #e50914;
+  margin: 15px 45px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+button:hover {
+  transition: 0.5s;
+  background-color: white;
+  color: #e50914;
 }
 </style>

@@ -34,7 +34,7 @@
 
     <div class="action flex">
       <button v-on:click="addFavorite()">Ajouter aux favoris</button>
-      <button>Ajouter aux "A voir"</button>
+      <button v-on:click="watchList()">Ajouter aux "A voir"</button>
     </div>
   </div>
 </template>
@@ -91,7 +91,62 @@ export default {
         console.error("ERREUR", e);
       }
     },
-    addFavorite: function () {
+    addFavorite: async function () {
+      if (this.$store.state.idSession == "") {
+        window.alert("Vous devez être connecté pour ajouter aux favoris");
+      } else {
+        try {
+          let response = await fetch(
+            `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/favorite?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
+            {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                media_type: "movie",
+                media_id: this.$route.params.id,
+                favorite: true,
+              }),
+            }
+          );
+          let favorites = await response.json();
+          window.alert(favorites.status_message);
+        } catch (e) {
+          console.error("ERREUR", e);
+        }
+      }
+      // Ajout dans mes favoris
+    },
+    watchList: async function () {
+      if (this.$store.state.idSession == "") {
+        window.alert(
+          'Vous devez être connecté pour ajouter à la liste "A Voir"'
+        );
+      } else {
+        try {
+          let response = await fetch(
+            `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/watchlist?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
+            {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                media_type: "movie",
+                media_id: this.$route.params.id,
+                watchlist: true,
+              }),
+            }
+          );
+          let watchlist = await response.json();
+          window.alert(watchlist.status_message);
+        } catch (e) {
+          console.error("ERREUR", e);
+        }
+      }
       // Ajout dans mes favoris
     },
   },
@@ -111,7 +166,7 @@ export default {
 
 .videoYoutube iframe {
   width: 100%;
-  min-height: 350px;
+  min-height: 390px;
 }
 
 .poster {

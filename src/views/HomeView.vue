@@ -61,7 +61,6 @@ export default {
     },
     slider: function () {
       let divMovie = document.querySelectorAll(".movieSlider");
-      console.log(divMovie);
     },
   },
 };
