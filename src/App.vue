@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>FAKEFLIX</h1>
+    <h1><router-link to="/">FAKEFLIX</router-link></h1>
     <nav class="flex">
       <div>
         <router-link to="/">Accueil</router-link>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { debounce } from "debounce";
 export default {
   name: "NavMain",
   data: function () {
@@ -36,28 +37,14 @@ export default {
     };
   },
   methods: {
-    searchMovie: function (event) {
+    searchMovie: debounce(function (event) {
       // Revenir au home
       if (this.$route.path != "/") {
         this.$router.push({ name: "home" });
       }
-      // Penser à retarder l'exécution de la fenêtre
-      // this.delay = 0;
-      // if (this.intervalId) {
-      //   clearInterval(this.intervalId);
-      //   console.log("Ok Interval");
-      // }
-      // this.intervalId = setInterval(() => {
-      //   this.delay++;
-      //   console.log(this.delay);
-      // }, 1000);
-      // console.log(this.intervalId);
-      // if (this.delay == 3) {
       this.$store.commit("searchWordChange", event.target.value);
       this.searchMovieRequest();
-      this.delay = 0;
-      // }
-    },
+    }, 500),
     searchMovieRequest: async function () {
       if (this.$store.state.searchWord) {
         try {

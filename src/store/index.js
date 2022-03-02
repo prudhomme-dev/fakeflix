@@ -11,8 +11,7 @@ export default new Vuex.Store({
     sessionId: '',
     accountId: '',
     accountName: '',
-    searchWord: '',
-    // searchResult: []
+    searchWord: ''
   },
   getters: {},
   mutations: {
