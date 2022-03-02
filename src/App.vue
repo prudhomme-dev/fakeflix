@@ -28,15 +28,11 @@
 </template>
 
 <script>
-import HomeViewVue from "./views/HomeView.vue";
-
 export default {
   name: "NavMain",
   data: function () {
     return {
       resultSearch: [],
-      delay: 0,
-      intervalId: 0,
     };
   },
   methods: {
@@ -189,5 +185,20 @@ button:hover {
   transition: 0.5s;
   background-color: white;
   color: #e50914;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+ul {
+  width: 80%;
+}
+
+li {
+  list-style: none;
+  padding: 5px;
 }
 </style>

@@ -32,9 +32,20 @@
       </div>
     </div>
 
-    <div class="action flex">
+    <div
+      v-if="
+        this.$store.state.accoundId != '' && this.$store.state.sessionId != ''
+      "
+      class="action flex"
+    >
       <button v-on:click="addFavorite()">Ajouter aux favoris</button>
       <button v-on:click="watchList()">Ajouter aux "A voir"</button>
+    </div>
+    <div v-else class="action">
+      <p>
+        Vous devez être connecté pour pouvoir ajouter ce film dans vos Favoris
+        ou vos Films à voir
+      </p>
     </div>
   </div>
 </template>

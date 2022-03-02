@@ -12,7 +12,7 @@ export default new Vuex.Store({
     accountId: '',
     accountName: '',
     searchWord: '',
-    searchResult: []
+    // searchResult: []
   },
   getters: {},
   mutations: {

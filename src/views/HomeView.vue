@@ -75,22 +75,9 @@ ul {
   flex-wrap: wrap;
 }
 
-ul {
-  width: 80%;
-}
-
-li {
-  list-style: none;
-  padding: 5px;
-}
-
 .news {
   width: 220px;
   max-height: 330px;
   overflow: hidden;
 }
-
-/* .movie {
-  width: 50%;
-} */
 </style>
