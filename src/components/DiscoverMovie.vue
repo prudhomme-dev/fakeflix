@@ -2,20 +2,31 @@
   <div class="newMovie">
     <h2>A la une</h2>
     <div class="news">
-      <div v-for="movie of discover" v-bind:key="movie.id">
-        <movie :movie="movie" :titledisplay="false" class="movieSlider"></movie>
-      </div>
+      <hooper :settings="hooperSettings">
+        <slide v-for="movie of discover" v-bind:key="movie.id">
+          <movie :movie="movie" :titledisplay="false"></movie>
+        </slide>
+      </hooper>
     </div>
   </div>
 </template>
 
 <script>
 import Movie from "@/components/Movie.vue";
+import { Hooper, Slide } from "hooper";
+
 export default {
   name: "DiscoverMovie",
   data: function () {
     return {
       discover: [],
+      hooperSettings: {
+        itemsToShow: 1,
+        centerMode: true,
+        autoPlay: true,
+        vertical: true,
+        trimWhiteSpace: true,
+      },
     };
   },
   created: function () {
@@ -23,6 +34,8 @@ export default {
   },
   components: {
     Movie,
+    Hooper,
+    Slide,
   },
   methods: {
     discoverMovie: async function () {
@@ -38,18 +51,15 @@ export default {
         console.error("ERREUR", e);
       }
     },
-    slider: function () {
-      let divMovie = document.querySelectorAll(".movieSlider");
-    },
   },
 };
 </script>
 
 
 <style scoped>
-.news {
+.hooper {
   width: 220px;
-  max-height: 330px;
-  overflow: hidden;
+  min-height: 330px;
+  padding: 0;
 }
 </style>
