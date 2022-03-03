@@ -1,6 +1,6 @@
 <template>
   <div class="movieDetail">
-    <div class="videoYoutube" v-if="movieVideo">
+    <div class="videoYoutube" v-if="movieVideo === ''">
       <iframe
         :src="movieVideo | urlVideoYoutube"
         title="YouTube video player"
@@ -61,6 +61,22 @@ export default {
     return {
       movieDetail: {},
       movieVideo: "",
+      notificationSystem: {
+        options: {
+          info: {
+            position: "bottomRight",
+          },
+          success: {
+            position: "bottomRight",
+          },
+          warning: {
+            position: "bottomRight",
+          },
+          error: {
+            position: "bottomRight",
+          },
+        },
+      },
     };
   },
   created: function () {
@@ -87,8 +103,9 @@ export default {
     movieDetailRequest: async function () {
       if (this.$route.params.id) {
         try {
+          // TODO : Essayer de mettre dans les mixins
           let response = await fetch(
-            `https://api.themoviedb.org/3/movie/${this.$route.params.id}?api_key=${this.$store.state.apiKey}&language=fr-FR`
+            `${this.$store.state.baseUrlApi}movie/${this.$route.params.id}?api_key=${this.$store.state.apiKey}&language=fr-FR`
           );
           let movies = await response.json();
           this.movieDetail = movies;
@@ -101,39 +118,62 @@ export default {
     movieVideoRequest: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/movie/${this.$route.params.id}/videos?api_key=${this.$store.state.apiKey}&language=fr-FR`
+          `${this.$store.state.baseUrlApi}movie/${this.$route.params.id}/videos?api_key=${this.$store.state.apiKey}&language=fr-FR`
         );
         let videos = await response.json();
-        if (videos.results.length != 0) this.movieVideo = videos.results[0].key;
+        if (videos.results.length != 0) {
+          this.movieVideo = videos.results[0].key;
+        }
       } catch (e) {
         console.error("ERREUR", e);
       }
     },
     addFavorite: async function () {
-      if (this.$store.state.idSession == "") {
-        window.alert("Vous devez être connecté pour ajouter aux favoris");
-      } else {
-        try {
-          let response = await fetch(
-            `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/favorite?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
-            {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                media_type: "movie",
-                media_id: this.$route.params.id,
-                favorite: true,
-              }),
-            }
+      try {
+        //TODO mettre les chemins de l'API dans un fichier .env
+        let response = await fetch(
+          `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/favorite?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              media_type: "movie",
+              media_id: this.$route.params.id,
+              favorite: true,
+            }),
+          }
+        );
+        let favorites = await response.json();
+
+        //TODO : faire une méthode spécialisée pour les notifs
+        if (favorites.status_code == 1)
+          this.$toast.success(
+            "Le film a été ajouté à vos favoris",
+            "Succès",
+            this.notificationSystem.options.success
           );
-          let favorites = await response.json();
-          window.alert(favorites.status_message);
-        } catch (e) {
-          console.error("ERREUR", e);
-        }
+        else if (favorites.status_code == 12)
+          this.$toast.warning(
+            "Ce film est déjà dans vos favoris",
+            "Attention",
+            this.notificationSystem.options.warning
+          );
+        else
+          this.$toast.error(
+            favorites.status_message,
+            "Erreur",
+            this.notificationSystem.options.error
+          );
+      } catch (e) {
+        console.error("ERREUR", e);
+        this.$toast.error(
+          "Erreur du serveur",
+          "Erreur",
+          this.notificationSystem.options.error
+        );
       }
       // Ajout dans mes favoris
     },
@@ -145,7 +185,7 @@ export default {
       } else {
         try {
           let response = await fetch(
-            `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/watchlist?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
+            `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/watchlist?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
             {
               method: "POST",
               headers: {
@@ -160,9 +200,31 @@ export default {
             }
           );
           let watchlist = await response.json();
-          window.alert(watchlist.status_message);
+          if (watchlist.status_code == 1)
+            this.$toast.success(
+              "Le film a été ajouté à votre liste",
+              "Succès",
+              this.notificationSystem.options.success
+            );
+          else if (watchlist.status_code == 12)
+            this.$toast.warning(
+              "Ce film est déjà dans votre liste",
+              "Attention",
+              this.notificationSystem.options.warning
+            );
+          else
+            this.$toast.error(
+              watchlist.status_message,
+              "Erreur",
+              this.notificationSystem.options.error
+            );
         } catch (e) {
           console.error("ERREUR", e);
+          this.$toast.error(
+            "Erreur du serveur",
+            "Erreur",
+            this.notificationSystem.options.error
+          );
         }
       }
       // Ajout dans mes favoris

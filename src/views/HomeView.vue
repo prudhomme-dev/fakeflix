@@ -1,8 +1,9 @@
 <template>
   <div class="home">
-    <div v-if="$store.state.searchWord == ''"></div>
+    <div v-if="searchWord == ''"></div>
 
-    <ul v-if="$store.state.searchWord != ''">
+    <ul v-if="searchWord != ''">
+      <!-- <p>Résultat pour : {{ searchWord }}</p> -->
       <li v-for="movie of searchresult" v-bind:key="movie.id" class="movie">
         <movie :movie="movie" :titledisplay="true"></movie>
       </li>
@@ -27,6 +28,13 @@ export default {
   components: {
     Movie,
     Discovermovie,
+  },
+  computed: {
+    // Récupération des données du Store pour une meilleure optimisation
+    // TODO Tester mapState
+    searchWord: function () {
+      return this.$store.state.searchWord;
+    },
   },
 };
 </script>

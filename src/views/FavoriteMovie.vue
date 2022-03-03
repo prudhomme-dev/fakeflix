@@ -37,7 +37,7 @@ export default {
     searchFavorite: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/favorite/movies?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}&language=fr-FR&sort_by=created_at.desc`
+          `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/favorite/movies?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}&language=fr-FR&sort_by=created_at.desc`
         );
         let favorites = await response.json();
         this.favoriteResult = favorites.results;

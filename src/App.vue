@@ -49,7 +49,7 @@ export default {
       if (this.$store.state.searchWord) {
         try {
           let response = await fetch(
-            `https://api.themoviedb.org/3/search/movie?api_key=${this.$store.state.apiKey}&language=fr-FR&query=${this.$store.state.searchWord}`
+            `${this.$store.state.baseUrlApi}search/movie?api_key=${this.$store.state.apiKey}&language=fr-FR&query=${this.$store.state.searchWord}&include_adult=false`
           );
           let movies = await response.json();
           this.resultSearch = movies.results;
@@ -66,7 +66,7 @@ export default {
     logout: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/authentication/session?api_key=${this.$store.state.apiKey}`,
+          `${this.$store.state.baseUrlApi}authentication/session?api_key=${this.$store.state.apiKey}`,
           {
             method: "DELETE",
             headers: {

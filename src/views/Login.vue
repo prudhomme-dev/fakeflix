@@ -48,7 +48,7 @@ export default {
       this.errorMessage = "";
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/authentication/token/new?api_key=${this.$store.state.apiKey}`
+          `${this.$store.state.baseUrlApi}authentication/token/new?api_key=${this.$store.state.apiKey}`
         );
         let tokens = await response.json();
         this.tokenOpen = tokens;
@@ -65,7 +65,7 @@ export default {
     validateToken: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=${this.$store.state.apiKey}`,
+          `${this.$store.state.baseUrlApi}authentication/token/validate_with_login?api_key=${this.$store.state.apiKey}`,
           {
             method: "POST",
             headers: {
@@ -95,7 +95,7 @@ export default {
     getSessionId: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/authentication/session/new?api_key=${this.$store.state.apiKey}`,
+          `${this.$store.state.baseUrlApi}authentication/session/new?api_key=${this.$store.state.apiKey}`,
           {
             method: "POST",
             headers: {
@@ -124,7 +124,7 @@ export default {
     getAccountId: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/account?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`
+          `${this.$store.state.baseUrlApi}account?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`
         );
         let accounts = await response.json();
         console.log(accounts);

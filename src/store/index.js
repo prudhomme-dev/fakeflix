@@ -5,15 +5,20 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    apiKey: '881d31bce175d790fb1a46ef9002cbfd',
+    baseUrlApi: `${process.env.VUE_APP_URL_API}${process.env.VUE_APP_VERSION_API}/`,
+    apiKey: process.env.VUE_APP_API_KEY,
     tokenId: '',
     tokenExpired_At: '',
     sessionId: '',
     accountId: '',
     accountName: '',
-    searchWord: ''
+    searchWord: '',
+    favoriteMovie: [],
+    watchList: []
   },
-  getters: {},
+  getters: {
+
+  },
   mutations: {
     searchWordChange(state, searchWord) {
       state.searchWord = searchWord;
@@ -37,6 +42,11 @@ export default new Vuex.Store({
       state.accountName = '';
     }
   },
-  actions: {},
-  modules: {}
+  actions: {
+
+    //TODO : mettre tous fetch la dedans
+
+
+
+  }
 })

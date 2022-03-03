@@ -38,7 +38,7 @@ export default {
     searchWatch: async function () {
       try {
         let response = await fetch(
-          `https://api.themoviedb.org/3/account/${this.$store.state.accountId}/watchlist/movies?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}&language=fr-FR&sort_by=created_at.desc`
+          `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/watchlist/movies?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}&language=fr-FR&sort_by=created_at.desc`
         );
         let watchmovies = await response.json();
         this.watchResult = watchmovies.results;

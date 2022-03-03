@@ -42,9 +42,7 @@ export default {
     discoverMovie: async function () {
       try {
         let response = await fetch(
-          "https://api.themoviedb.org/3/discover/movie?api_key=" +
-            this.$store.state.apiKey +
-            "&language=fr-FR"
+          `${this.$store.state.baseUrlApi}discover/movie?api_key=${this.$store.state.apiKey}&language=fr-FR`
         );
         let movies = await response.json();
         this.discover = movies.results;

@@ -9,12 +9,17 @@ import {
 } from 'hooper';
 import 'hooper/dist/hooper.css';
 
+import VueIziToast from 'vue-izitoast';
+import 'izitoast/dist/css/iziToast.css';
+
+Vue.use(VueIziToast);
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
+  VueIziToast,
   Hooper,
   Slide,
   Debounce,
