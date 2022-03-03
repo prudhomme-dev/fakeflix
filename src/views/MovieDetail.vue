@@ -21,6 +21,9 @@
             movieDetail.original_language | capitalize
           }})</span
         >
+        <span v-if="movieDetail.release_date">
+          Date de sortie: {{ movieDetail.release_date | dateFr }}</span
+        >
         <p>{{ movieDetail.overview }}</p>
 
         <h3>Informations</h3>
@@ -66,7 +69,7 @@ export default {
   filters: {
     urlImg: function (value) {
       if (value == null)
-        return "https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-38-picture-grey-c2ebdbb057f2a7614185931650f8cee23fa137b93812ccb132b9df511df1cfac.svg";
+        return "https://webboy.fr/wp-content/uploads/2022/03/image-non-disponible.png";
       else return "https://www.themoviedb.org/t/p/w300_and_h450_bestv2" + value;
     },
     urlVideoYoutube: function (value) {
@@ -74,6 +77,10 @@ export default {
     },
     capitalize: function (value) {
       return value ? value.toUpperCase() : value;
+    },
+    dateFr: function (value) {
+      let date = new Date(value);
+      return date.toLocaleDateString("fr-FR");
     },
   },
   methods: {

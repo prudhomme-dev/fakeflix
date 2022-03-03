@@ -1,7 +1,7 @@
 <template>
   <div class="newMovie">
-    <h2>A la une</h2>
     <div class="news">
+      <h2>{{ title }}</h2>
       <hooper :settings="hooperSettings">
         <slide v-for="movie of discover" v-bind:key="movie.id">
           <movie :movie="movie" :titledisplay="false"></movie>
@@ -37,6 +37,7 @@ export default {
     Hooper,
     Slide,
   },
+  props: ["title"],
   methods: {
     discoverMovie: async function () {
       try {
@@ -61,5 +62,11 @@ export default {
   width: 220px;
   min-height: 330px;
   padding: 0;
+}
+
+.newMovie {
+  /* margin: 0 auto; */
+  /* text-align: center; */
+  width: 220px;
 }
 </style>

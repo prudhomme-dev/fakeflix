@@ -11,13 +11,14 @@
         </li>
       </ul>
     </div>
-
-    <!-- Penser à rajouter le slide des découvertes -->
+    <discovermovie title="Autres Films"></discovermovie>
   </div>
 </template>
 
 <script>
 import Movie from "@/components/Movie.vue";
+import Discovermovie from "@/components/DiscoverMovie.vue";
+
 export default {
   name: "FavoriteMovie",
   data: function () {
@@ -27,6 +28,7 @@ export default {
   },
   components: {
     Movie,
+    Discovermovie,
   },
   created: function () {
     if (this.$store.state.sessionId != "") this.searchFavorite();
@@ -48,7 +50,11 @@ export default {
 </script>
 
 
+
 <style scoped>
+.news {
+  margin: 0 auto;
+}
 </style>
 
 

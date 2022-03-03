@@ -12,11 +12,14 @@
         </li>
       </ul>
     </div>
+    <discovermovie title="Autres Films"></discovermovie>
   </div>
 </template>
 
 <script>
 import Movie from "@/components/Movie.vue";
+import Discovermovie from "@/components/DiscoverMovie.vue";
+
 export default {
   name: "WatchMovie",
   data: function () {
@@ -26,6 +29,7 @@ export default {
   },
   components: {
     Movie,
+    Discovermovie,
   },
   created: function () {
     if (this.$store.state.sessionId != "") this.searchWatch();

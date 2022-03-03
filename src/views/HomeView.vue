@@ -8,7 +8,7 @@
       </li>
     </ul>
 
-    <discovermovie></discovermovie>
+    <discovermovie title="A la une"></discovermovie>
   </div>
 </template>
 
