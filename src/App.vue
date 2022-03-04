@@ -23,6 +23,7 @@
     <router-view
       :searchuser="$store.state.searchWord"
       :searchresult="resultSearch"
+      :loading="loading"
     />
   </div>
 </template>
@@ -34,7 +35,23 @@ export default {
   data: function () {
     return {
       resultSearch: [],
+      loading: false,
+      notificationSystem: {
+        options: {
+          success: {
+            position: "bottomRight",
+            close: false,
+          },
+          error: {
+            position: "bottomRight",
+            close: false,
+          },
+        },
+      },
     };
+  },
+  created: function () {
+    this.$store.dispatch("discoverMovie");
   },
   methods: {
     searchMovie: debounce(function (event) {
@@ -46,15 +63,18 @@ export default {
       this.searchMovieRequest();
     }, 500),
     searchMovieRequest: async function () {
+      this.$store.commit("loadingUpdate", true);
       if (this.$store.state.searchWord) {
         try {
           let response = await fetch(
-            `${this.$store.state.baseUrlApi}search/movie?api_key=${this.$store.state.apiKey}&language=fr-FR&query=${this.$store.state.searchWord}&include_adult=false`
+            `${this.$store.state.baseUrlApi}search/movie?api_key=${this.$store.state.apiKey}&language=fr-FR&query=${this.$store.state.searchWord}&include_adult=${this.$store.state.adultContent}`
           );
           let movies = await response.json();
           this.resultSearch = movies.results;
+          this.$store.commit("loadingUpdate", false);
         } catch (e) {
           console.error("ERREUR", e);
+          this.$store.commit("loadingUpdate", false);
         }
       }
     },
@@ -81,9 +101,18 @@ export default {
         let sessions = await response.json();
         if (sessions.success) {
           this.$store.commit("resetSession");
+          this.$toast.success(
+            `La session a été déconnectée`,
+            "Déconnecté",
+            this.notificationSystem.options.success
+          );
           if (this.$route.name != "home") this.$router.push({ name: "home" });
         } else {
-          window.alert("Erreur de déconnexion");
+          this.$toast.error(
+            `Erreur de déconnexion`,
+            "Erreur",
+            this.notificationSystem.options.success
+          );
         }
       } catch (e) {
         console.error("ERREUR", e);

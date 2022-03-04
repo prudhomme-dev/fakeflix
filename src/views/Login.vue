@@ -19,7 +19,7 @@
         <input type="password" id="password" name="password" required />
       </label>
     </p>
-
+    <div v-if="$store.state.loading" class="loader" id="loader"></div>
     <p><button v-on:click="getTokenId()">Se Connecter</button></p>
 
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -35,6 +35,18 @@ export default {
       TokenValidation: {},
       sessionId: {},
       errorMessage: "",
+      notificationSystem: {
+        options: {
+          success: {
+            position: "bottomRight",
+            close: false,
+          },
+          error: {
+            position: "bottomRight",
+            close: false,
+          },
+        },
+      },
     };
   },
   created: function () {
@@ -42,6 +54,7 @@ export default {
   },
   methods: {
     getTokenId: async function () {
+      this.$store.commit("loadingUpdate", true);
       this.tokenOpen = {};
       this.TokenValidation = {};
       this.sessionId = {};
@@ -56,10 +69,16 @@ export default {
           this.$store.commit("getToken", this.tokenOpen);
           this.validateToken();
         } else {
-          this.errorMessage = this.tokenOpen.status_message;
+          this.$toast.error(
+            this.tokenOpen.status_message,
+            "Erreur",
+            this.notificationSystem.options.error
+          );
+          this.$store.commit("loadingUpdate", false);
         }
       } catch (e) {
         console.error("ERREUR", e);
+        this.$store.commit("loadingUpdate", false);
       }
     },
     validateToken: async function () {
@@ -85,10 +104,16 @@ export default {
           this.$store.commit("getToken", this.TokenValidation);
           this.getSessionId();
         } else {
-          this.errorMessage = this.TokenValidation.status_message;
+          this.$toast.error(
+            this.TokenValidation.status_message,
+            "Erreur",
+            this.notificationSystem.options.error
+          );
+          this.$store.commit("loadingUpdate", false);
         }
       } catch (e) {
         console.error("ERREUR", e);
+        this.$store.commit("loadingUpdate", false);
       }
     },
 
@@ -114,10 +139,16 @@ export default {
           this.errorMessage = "";
           this.getAccountId();
         } else {
-          this.errorMessage = this.sessionId.status_message;
+          this.$toast.error(
+            this.sessionId.status_message,
+            "Erreur",
+            this.notificationSystem.options.error
+          );
+          this.$store.commit("loadingUpdate", false);
         }
       } catch (e) {
         console.error("ERREUR", e);
+        this.$store.commit("loadingUpdate", false);
       }
     },
     getAccountId: async function () {
@@ -133,12 +164,25 @@ export default {
           // Récupération des liste à voir à la connexion
           this.$store.dispatch("searchWatch");
           this.errorMessage = "";
+          this.$toast.success(
+            `Bonjour ${accounts.name}`,
+            "Connecté",
+            this.notificationSystem.options.success
+          );
+          this.$store.commit("loadingUpdate", false);
+
           this.$router.push({ name: "home" });
         } else {
-          this.errorMessage = accounts.status_message;
+          this.$toast.error(
+            this.accounts.status_message,
+            "Erreur",
+            this.notificationSystem.options.error
+          );
+          this.$store.commit("loadingUpdate", false);
         }
       } catch (e) {
         console.error("ERREUR", e);
+        this.$store.commit("loadingUpdate", false);
       }
     },
   },
@@ -147,4 +191,53 @@ export default {
 
 
 <style scoped>
+/* LOADER */
+
+#loader:before,
+#loader:after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: #e50914;
+  animation: squaremove 1s ease-in-out infinite;
+}
+
+#loader:after {
+  bottom: 0;
+  animation-delay: 0.5s;
+}
+
+@keyframes squaremove {
+  0%,
+  100% {
+    -webkit-transform: translate(0, 0) rotate(0);
+    -ms-transform: translate(0, 0) rotate(0);
+    -o-transform: translate(0, 0) rotate(0);
+    transform: translate(0, 0) rotate(0);
+  }
+
+  25% {
+    -webkit-transform: translate(40px, 40px) rotate(45deg);
+    -ms-transform: translate(40px, 40px) rotate(45deg);
+    -o-transform: translate(40px, 40px) rotate(45deg);
+    transform: translate(40px, 40px) rotate(45deg);
+  }
+
+  50% {
+    -webkit-transform: translate(0px, 80px) rotate(0deg);
+    -ms-transform: translate(0px, 80px) rotate(0deg);
+    -o-transform: translate(0px, 80px) rotate(0deg);
+    transform: translate(0px, 80px) rotate(0deg);
+  }
+
+  75% {
+    -webkit-transform: translate(-40px, 40px) rotate(45deg);
+    -ms-transform: translate(-40px, 40px) rotate(45deg);
+    -o-transform: translate(-40px, 40px) rotate(45deg);
+    transform: translate(-40px, 40px) rotate(45deg);
+  }
+}
 </style>

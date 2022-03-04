@@ -3,7 +3,10 @@
     <div class="news">
       <h2>{{ title }}</h2>
       <hooper :settings="hooperSettings">
-        <slide v-for="movie of discover" v-bind:key="movie.id">
+        <slide
+          v-for="movie of $store.state.discoverMovie"
+          v-bind:key="movie.id"
+        >
           <movie :movie="movie" :titledisplay="false"></movie>
         </slide>
       </hooper>
@@ -30,7 +33,7 @@ export default {
     };
   },
   created: function () {
-    this.discoverMovie();
+    // this.discoverMovie();
   },
   components: {
     Movie,
@@ -39,17 +42,17 @@ export default {
   },
   props: ["title"],
   methods: {
-    discoverMovie: async function () {
-      try {
-        let response = await fetch(
-          `${this.$store.state.baseUrlApi}discover/movie?api_key=${this.$store.state.apiKey}&language=fr-FR`
-        );
-        let movies = await response.json();
-        this.discover = movies.results;
-      } catch (e) {
-        console.error("ERREUR", e);
-      }
-    },
+    // discoverMovie: async function () {
+    //   try {
+    //     let response = await fetch(
+    //       `${this.$store.state.baseUrlApi}discover/movie?api_key=${this.$store.state.apiKey}&language=fr-FR`
+    //     );
+    //     let movies = await response.json();
+    //     this.discover = movies.results;
+    //   } catch (e) {
+    //     console.error("ERREUR", e);
+    //   }
+    // },
   },
 };
 </script>

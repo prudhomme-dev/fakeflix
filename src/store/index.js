@@ -14,11 +14,12 @@ export default new Vuex.Store({
     accountName: '',
     searchWord: '',
     favoriteMovie: [],
-    watchList: []
+    watchList: [],
+    discoverMovie: [],
+    adultContent: false,
+    loading: false,
   },
-  getters: {
-
-  },
+  getters: {},
   mutations: {
     searchWordChange(state, searchWord) {
       state.searchWord = searchWord;
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     getAccount(state, accountinfo) {
       state.accountId = accountinfo.id;
       state.accountName = accountinfo.name;
+      state.adultContent = accountinfo.include_adult;
     },
     resetSession(state) {
       state.sessionId = '';
@@ -42,6 +44,7 @@ export default new Vuex.Store({
       state.accountName = '';
       state.favoriteMovie = [];
       state.watchList = [];
+      state.adultContent = false;
     },
     watchListUpdate(state, data) {
       state.watchList = data;
@@ -49,6 +52,13 @@ export default new Vuex.Store({
     FavoriteUpdate(state, data) {
       state.favoriteMovie = data;
     },
+    discoverUpdate(state, data) {
+      state.discoverMovie = data;
+    },
+    loadingUpdate(state, status) {
+      state.loading = status;
+
+    }
 
   },
   actions: {
@@ -76,7 +86,17 @@ export default new Vuex.Store({
         console.error("ERREUR", e);
       }
     },
-
+    discoverMovie: async function (context) {
+      try {
+        let response = await fetch(
+          `${context.state.baseUrlApi}discover/movie?api_key=${context.state.apiKey}&language=fr-FR`
+        );
+        let movies = await response.json();
+        context.commit("discoverUpdate", movies.results)
+      } catch (e) {
+        console.error("ERREUR", e);
+      }
+    },
 
   }
 })

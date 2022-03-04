@@ -35,22 +35,6 @@ export default {
     Movie,
     Discovermovie,
   },
-  created: function () {
-    // if (this.$store.state.sessionId != "") this.searchWatch();
-  },
-  methods: {
-    // searchWatch: async function () {
-    //   try {
-    //     let response = await fetch(
-    //       `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/watchlist/movies?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}&language=fr-FR&sort_by=created_at.desc`
-    //     );
-    //     let watchmovies = await response.json();
-    //     this.watchResult = watchmovies.results;
-    //   } catch (e) {
-    //     console.error("ERREUR", e);
-    //   }
-    // },
-  },
 };
 </script>
 

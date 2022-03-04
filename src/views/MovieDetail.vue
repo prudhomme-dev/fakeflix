@@ -78,15 +78,19 @@ export default {
         options: {
           info: {
             position: "bottomRight",
+            close: false,
           },
           success: {
             position: "bottomRight",
+            close: false,
           },
           warning: {
             position: "bottomRight",
+            close: false,
           },
           error: {
             position: "bottomRight",
+            close: false,
           },
         },
       },
