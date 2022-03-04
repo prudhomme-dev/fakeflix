@@ -332,6 +332,25 @@ h2 {
   color: white;
 }
 
+p,
+li {
+  color: #e50914;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+li::before {
+  content: url("https://api.iconify.design/bi/arrow-right-short.svg?color=white");
+  padding: 0 8px;
+}
+
 .movieDetail {
   padding: 15px 5px;
 }

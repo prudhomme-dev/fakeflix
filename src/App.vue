@@ -217,4 +217,8 @@ li {
   list-style: none;
   padding: 5px;
 }
+
+p {
+  color: white;
+}
 </style>

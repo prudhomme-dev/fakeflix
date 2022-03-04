@@ -32,28 +32,12 @@ export default {
       },
     };
   },
-  created: function () {
-    // this.discoverMovie();
-  },
   components: {
     Movie,
     Hooper,
     Slide,
   },
   props: ["title"],
-  methods: {
-    // discoverMovie: async function () {
-    //   try {
-    //     let response = await fetch(
-    //       `${this.$store.state.baseUrlApi}discover/movie?api_key=${this.$store.state.apiKey}&language=fr-FR`
-    //     );
-    //     let movies = await response.json();
-    //     this.discover = movies.results;
-    //   } catch (e) {
-    //     console.error("ERREUR", e);
-    //   }
-    // },
-  },
 };
 </script>
 
@@ -69,5 +53,9 @@ export default {
   /* margin: 0 auto; */
   /* text-align: center; */
   width: 220px;
+}
+
+h2 {
+  color: #e50914;
 }
 </style>

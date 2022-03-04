@@ -39,4 +39,7 @@ export default {
 </script>
 
 <style scoped>
+p {
+  color: white;
+}
 </style>

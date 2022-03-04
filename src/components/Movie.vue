@@ -20,7 +20,6 @@ export default {
     },
   },
   props: ["movie", "titledisplay"],
-  methods: {},
 };
 </script>
 

@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-    <div v-if="searchWord != ''">
-      <h3>Résultat pour : {{ searchWord }}</h3>
-      <div v-if="$store.state.loading" class="loader" id="loader"></div>
+    <div v-if="searchWord != ''" class="title">
+      Résultat pour la recherche : {{ searchWord }}
     </div>
     <div v-if="searchWord == ''"></div>
     <div class="flex">
@@ -11,6 +10,7 @@
           <movie :movie="movie" :titledisplay="true"></movie>
         </li>
       </ul>
+      <div v-if="$store.state.loading" class="loader" id="loader"></div>
 
       <discovermovie title="A la une"></discovermovie>
     </div>
@@ -50,6 +50,14 @@ ul {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+}
+
+.title {
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  font-size: 25px;
+  display: block;
 }
 
 /* LOADER */
