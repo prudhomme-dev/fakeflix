@@ -1,6 +1,6 @@
 <template>
   <div class="movieDetail">
-    <div class="videoYoutube" v-if="movieVideo === ''">
+    <div class="videoYoutube" v-if="movieVideo != ''">
       <iframe
         :src="movieVideo | urlVideoYoutube"
         title="YouTube video player"
@@ -41,8 +41,19 @@
       "
       class="action flex"
     >
-      <button v-on:click="addFavorite()">Ajouter aux favoris</button>
-      <button v-on:click="watchList()">Ajouter aux "A voir"</button>
+      <button v-if="!this.isFavoriteMovieList" v-on:click="addFavorite(true)">
+        Ajouter aux favoris
+      </button>
+      <button v-else v-on:click="addFavorite(false)">
+        Supprimer des favoris
+      </button>
+
+      <button v-if="!this.isWatchlistMovie" v-on:click="watchList(true)">
+        Ajouter aux "A voir"
+      </button>
+      <button v-else v-on:click="watchList(false)">
+        Supprimer des films "A voir"
+      </button>
     </div>
     <div v-else class="action">
       <p>
@@ -61,6 +72,8 @@ export default {
     return {
       movieDetail: {},
       movieVideo: "",
+      isWatchlistMovie: false,
+      isFavoriteMovieList: false,
       notificationSystem: {
         options: {
           info: {
@@ -81,6 +94,8 @@ export default {
   },
   created: function () {
     this.movieDetailRequest();
+    this.isWatchlist();
+    this.isFavoriteList();
   },
   filters: {
     urlImg: function (value) {
@@ -128,9 +143,8 @@ export default {
         console.error("ERREUR", e);
       }
     },
-    addFavorite: async function () {
+    addFavorite: async function (action) {
       try {
-        //TODO mettre les chemins de l'API dans un fichier .env
         let response = await fetch(
           `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/favorite?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
           {
@@ -142,18 +156,25 @@ export default {
             body: JSON.stringify({
               media_type: "movie",
               media_id: this.$route.params.id,
-              favorite: true,
+              favorite: action,
             }),
           }
         );
         let favorites = await response.json();
-
+        this.$store.dispatch("searchFavorite");
+        this.isFavoriteMovieList = action;
         //TODO : faire une méthode spécialisée pour les notifs
         if (favorites.status_code == 1)
           this.$toast.success(
             "Le film a été ajouté à vos favoris",
             "Succès",
             this.notificationSystem.options.success
+          );
+        else if (favorites.status_code == 13)
+          this.$toast.success(
+            "Ce film a été retiré de vos favoris",
+            "Succès",
+            this.notificationSystem.options.warning
           );
         else if (favorites.status_code == 12)
           this.$toast.warning(
@@ -175,59 +196,81 @@ export default {
           this.notificationSystem.options.error
         );
       }
-      // Ajout dans mes favoris
     },
-    watchList: async function () {
-      if (this.$store.state.idSession == "") {
-        window.alert(
-          'Vous devez être connecté pour ajouter à la liste "A Voir"'
+    watchList: async function (action) {
+      try {
+        let response = await fetch(
+          `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/watchlist?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              media_type: "movie",
+              media_id: this.$route.params.id,
+              watchlist: action,
+            }),
+          }
         );
-      } else {
-        try {
-          let response = await fetch(
-            `${this.$store.state.baseUrlApi}account/${this.$store.state.accountId}/watchlist?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`,
-            {
-              method: "POST",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                media_type: "movie",
-                media_id: this.$route.params.id,
-                watchlist: true,
-              }),
-            }
+        let watchlist = await response.json();
+        this.$store.dispatch("searchWatch");
+        this.isWatchlistMovie = action;
+        if (watchlist.status_code == 1)
+          this.$toast.success(
+            "Le film a été ajouté à votre liste",
+            "Succès",
+            this.notificationSystem.options.success
           );
-          let watchlist = await response.json();
-          if (watchlist.status_code == 1)
-            this.$toast.success(
-              "Le film a été ajouté à votre liste",
-              "Succès",
-              this.notificationSystem.options.success
-            );
-          else if (watchlist.status_code == 12)
-            this.$toast.warning(
-              "Ce film est déjà dans votre liste",
-              "Attention",
-              this.notificationSystem.options.warning
-            );
-          else
-            this.$toast.error(
-              watchlist.status_message,
-              "Erreur",
-              this.notificationSystem.options.error
-            );
-        } catch (e) {
-          console.error("ERREUR", e);
+        else if (watchlist.status_code == 12)
+          this.$toast.warning(
+            "Ce film est déjà dans votre liste",
+            "Attention",
+            this.notificationSystem.options.warning
+          );
+        else if (watchlist.status_code == 13)
+          this.$toast.success(
+            "Ce film a été supprimé de votre liste",
+            "Succès",
+            this.notificationSystem.options.warning
+          );
+        else
           this.$toast.error(
-            "Erreur du serveur",
+            watchlist.status_message,
             "Erreur",
             this.notificationSystem.options.error
           );
-        }
+      } catch (e) {
+        console.error("ERREUR", e);
+        this.$toast.error(
+          "Erreur du serveur",
+          "Erreur",
+          this.notificationSystem.options.error
+        );
       }
-      // Ajout dans mes favoris
+    },
+    isWatchlist: function () {
+      if (
+        this.$store.state.watchList.findIndex(
+          (element) => element.id == this.$route.params.id
+        ) != -1
+      ) {
+        this.isWatchlistMovie = true;
+      } else {
+        this.isWatchlistMovie = false;
+      }
+    },
+    isFavoriteList: function () {
+      if (
+        this.$store.state.favoriteMovie.findIndex(
+          (element) => element.id == this.$route.params.id
+        ) != -1
+      ) {
+        this.isFavoriteMovieList = true;
+      } else {
+        this.isFavoriteMovieList = false;
+      }
     },
   },
 };

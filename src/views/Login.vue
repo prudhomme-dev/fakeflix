@@ -113,7 +113,6 @@ export default {
           this.$store.commit("getSession", this.sessionId);
           this.errorMessage = "";
           this.getAccountId();
-          // this.$router.push({ name: "home" });
         } else {
           this.errorMessage = this.sessionId.status_message;
         }
@@ -127,10 +126,12 @@ export default {
           `${this.$store.state.baseUrlApi}account?api_key=${this.$store.state.apiKey}&session_id=${this.$store.state.sessionId}`
         );
         let accounts = await response.json();
-        console.log(accounts);
-        // this.sessionId = sessions;
         if (accounts.id) {
           this.$store.commit("getAccount", accounts);
+          // Récupération des films en favoris
+          this.$store.dispatch("searchFavorite");
+          // Récupération des liste à voir à la connexion
+          this.$store.dispatch("searchWatch");
           this.errorMessage = "";
           this.$router.push({ name: "home" });
         } else {
